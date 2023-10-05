@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const vacinaController = require("../controllers/exame-controller");
+const exameController = require("../controllers/exame-controller");
 
-router.get("/", exameController.getExame);
+router.get("/exame", exameController.getExame);
 
 module.exports = router;
