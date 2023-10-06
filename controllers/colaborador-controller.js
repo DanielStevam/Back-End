@@ -3,7 +3,7 @@ const mysql = require("../mysql");
 exports.getColaborador = async (req, res, next) => {
   try {
     const response = {
-      message: "success",
+      message: "success colaborador",
     };
     return res.status(200).send(response);
   } catch (error) {
