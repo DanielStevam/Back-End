@@ -1,6 +1,6 @@
 {
     "env": {
-        "PORT": 3006,
+        "PORT": 3000,
         "MYSQL_USER": "vaxcontrol@vaxcontrol",
         "MYSQL_PASSWORD": "mudarsenh@123456",
         "MYSQL_DATABASE": "vaxcontrol",
