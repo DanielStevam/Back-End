@@ -5,7 +5,7 @@ exports.getUser = async (req, res, next) => {
     const { nome, senha } = req.body;
 
     const query = "SELECT * FROM usuario WHERE nome = ? AND senha = ?";
-    const result = await mysql.query(query, [nome, senha]);
+    const result = await mysql.execute(query, [nome, senha]);
     if (result.length > 0) {
       const response = {
         message: "Login feito com sucesso",
