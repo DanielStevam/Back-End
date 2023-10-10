@@ -9,7 +9,12 @@ exports.getUser = async (req, res, next) => {
     if (result.length > 0) {
       const response = {
         message: "Login feito com sucesso",
-        nome: result[0],
+        nome: result.map((setor) => {
+          return {
+            id_setor: setor.idsetor,
+            nome_setor: setor.nome,
+          };
+        }),
       };
       return res.status(200).send(response);
     } else {
