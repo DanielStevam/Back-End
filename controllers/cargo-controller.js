@@ -20,16 +20,18 @@ async function inserirCargo(nomeCargo, idSetor) {
 
 exports.getCargo = async (req, res) => {
   try {
-    const queryAll = "SELECT * FROM cargo";
+    const queryAll =
+      "SELECT cargo.nome as nomeCargo, setor.nome as nomeSetor FROM cargo inner join setor on cargo.setor_idsetor = setor.idsetor";
     const result = await mysql.execute(queryAll);
     if (result.length > 0) {
+      console.log(result);
       const response = {
         message: "Success",
         cargos: result.map((cargo) => {
           return {
             id_cargo: cargo.idcargo,
-            nome: cargo.nome,
-            // Outros campos relevantes da tabela "cargo"
+            nomeCargo: cargo.nomeCargo,
+            nomeSetor: cargo.nomeSetor,
           };
         }),
       };
