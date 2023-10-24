@@ -1,6 +1,6 @@
 const mysql = require("../mysql");
 
-exports.getAll = async (req, res, next) => {
+exports.getAll = async (req, res) => {
   try {
     const queryAll = "SELECT * FROM setor";
     const result = await mysql.execute(queryAll);
@@ -21,5 +21,66 @@ exports.getAll = async (req, res, next) => {
   } catch (error) {
     console.error(error);
     return res.status(500).send({ error: "Erro do servidor" });
+  }
+};
+exports.createSetor = async (req, res) => {
+  try {
+    const { nome } = req.body;
+
+    if (!nome) {
+      return res.status(400).send({ error: "O campo 'nome' é obrigatório." });
+    }
+
+    const query = "INSERT INTO setor (nome) VALUES (?)";
+    const params = [nome];
+    const result = await mysql.execute(query, params);
+
+    if (result.affectedRows > 0) {
+      const newSetorId = result.insertId;
+
+      return res.status(201).send({
+        message: "Setor criado com sucesso",
+        setor: {
+          id_setor: newSetorId,
+          nome_setor: nome,
+        },
+      });
+    } else {
+      return res.status(500).send({ error: "Falha ao criar o setor" });
+    }
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send({ error: "Erro do servidor" });
+  }
+};
+
+exports.updateSetor = async (req, res) => {
+  try {
+    const { nome, idsetor } = req.body;
+    const query = "UPDATE cargo SET nome = ? WHERE idsetor = ?;";
+    const params = [nome, idsetor];
+    await mysql.execute(query, params);
+    // todo: valide se as linhas foram afetadas. Exemplo acima em result.lenght > 0
+
+    return res
+      .status(200)
+      .send({ response: `Setor de id ${idsetor} atualizado com sucesso` });
+  } catch (err) {
+    return res.status(400).send({ error: err });
+  }
+};
+exports.deleteSetor = async (req, res) => {
+  try {
+    const { idsetor } = req.params;
+    const query = "delete from setor WHERE idsetor = ?;";
+    const params = [idsetor];
+    await mysql.execute(query, params);
+    // todo: valide se as linhas foram afetadas. Exemplo acima em result.lenght > 0
+
+    return res
+      .status(200)
+      .send({ response: `Setor de id ${idsetor} DELETADO com sucesso` });
+  } catch (err) {
+    return res.status(400).send({ error: err });
   }
 };

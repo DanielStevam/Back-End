@@ -25,24 +25,34 @@ exports.getColaborador = async (req, res, next) => {
 
 exports.postColaborador = async (req, res, next) => {
   try {
-    const { nome, cpf } = req.body;
-    const query = "SELECT * FROM colaborador WHERE nome = ? AND cpf = ?";
+    const { nome, cpf, cargo_idcargo } = req.body; // Certifique-se de incluir cargo_idcargo no corpo da solicitação
+
+    if (!nome || !cpf || !cargo_idcargo) {
+      return res
+        .status(400)
+        .send({
+          error: "Campos 'nome', 'cpf' e 'cargo_idcargo' são obrigatórios.",
+        });
+    }
+
+    const query =
+      "INSERT INTO colaborador (nome, cpf, cargo_idcargo) VALUES (?, ?, ?)";
 
     try {
-      const [result] = await mysql.execute(query, [nome, cpf]);
+      const result = await mysql.execute(query, [nome, cpf, cargo_idcargo]);
 
-      if (result && result.length > 0) {
-        const colaborador = result[0];
+      if (result.affectedRows > 0) {
+        const novoColaboradorId = result.insertId;
         const response = {
-          message: "Login feito com sucesso",
+          message: "Usuário criado com sucesso",
           colaborador: {
-            id_colaborador: colaborador.id_colaborador,
-            nome: colaborador.nome,
+            id_colaborador: novoColaboradorId,
+            nome,
           },
         };
-        return res.status(200).send(response);
+        return res.status(201).send(response);
       } else {
-        return res.status(401).send({ message: "Credenciais Inválidas" });
+        return res.status(500).send({ message: "Falha ao criar o usuário" });
       }
     } catch (error) {
       console.error(error);

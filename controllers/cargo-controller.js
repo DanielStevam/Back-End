@@ -24,7 +24,6 @@ exports.getCargo = async (req, res) => {
       "SELECT cargo.nome as nomeCargo, setor.nome as nomeSetor FROM cargo inner join setor on cargo.setor_idsetor = setor.idsetor";
     const result = await mysql.execute(queryAll);
     if (result.length > 0) {
-      console.log(result);
       const response = {
         message: "Success",
         cargos: result.map((cargo) => {
