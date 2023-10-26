@@ -1,18 +1,19 @@
 const mysql = require("../mysql");
 
-exports.getColaborador = async (req, res, next) => {
+exports.getColaborador = async (req, res) => {
   try {
     const query = "SELECT nome, cpf FROM colaborador";
-    const [result] = await mysql.execute(query);
+    const result = await mysql.execute(query);
 
-    if (result && result.length > 0) {
+    if (Array.isArray(result) && result[0]) {
+      console.log("Resultados encontrados.");
       const response = result.map((colaborador) => ({
         nome: colaborador.nome,
         cpf: colaborador.cpf,
       }));
-
       return res.status(200).json(response);
     } else {
+      console.log("Nenhum colaborador encontrado.");
       return res.status(404).json({ error: "Nenhum colaborador encontrado" });
     }
   } catch (error) {
@@ -25,14 +26,12 @@ exports.getColaborador = async (req, res, next) => {
 
 exports.postColaborador = async (req, res, next) => {
   try {
-    const { nome, cpf, cargo_idcargo } = req.body; // Certifique-se de incluir cargo_idcargo no corpo da solicitação
+    const { nome, cpf, cargo_idcargo } = req.body;
 
     if (!nome || !cpf || !cargo_idcargo) {
-      return res
-        .status(400)
-        .send({
-          error: "Campos 'nome', 'cpf' e 'cargo_idcargo' são obrigatórios.",
-        });
+      return res.status(400).send({
+        error: "Campos 'nome', 'cpf' e 'cargo_idcargo' são obrigatórios.",
+      });
     }
 
     const query =
