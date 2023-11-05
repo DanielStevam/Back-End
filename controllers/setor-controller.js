@@ -25,26 +25,46 @@ exports.getAll = async (req, res) => {
 };
 exports.createSetor = async (req, res) => {
   try {
-    const { nome } = req.body;
+    const { nome, cargo_id } = req.body;
 
-    if (!nome) {
-      return res.status(400).send({ error: "O campo 'nome' é obrigatório." });
+    if (!nome || !cargo_id) {
+      return res
+        .status(400)
+        .send({ error: "Os campos 'nome' e 'cargo_id' são obrigatórios." });
     }
 
-    const query = "INSERT INTO setor (nome) VALUES (?)";
-    const params = [nome];
-    const result = await mysql.execute(query, params);
+    const setorQuery = "INSERT INTO setor (nome) VALUES (?)";
+    const setorParams = [nome];
+    const setorResult = await mysql.execute(setorQuery, setorParams);
 
-    if (result.affectedRows > 0) {
-      const newSetorId = result.insertId;
+    if (setorResult.affectedRows > 0) {
+      const newSetorId = setorResult.insertId;
 
-      return res.status(201).send({
-        message: "Setor criado com sucesso",
-        setor: {
-          id_setor: newSetorId,
-          nome_setor: nome,
-        },
-      });
+      const colaboradorQuery =
+        "INSERT INTO colaboradores (cargo_id, nome) VALUES (?, ?)";
+      const colaboradorParams = [cargo_id, nome];
+      const colaboradorResult = await mysql.execute(
+        colaboradorQuery,
+        colaboradorParams
+      );
+
+      if (colaboradorResult.affectedRows > 0) {
+        return res.status(201).send({
+          message:
+            "Setor criado com sucesso e associado a um cargo de colaborador",
+          setor: {
+            id_setor: newSetorId,
+            nome_setor: nome,
+          },
+        });
+      } else {
+        return res
+          .status(500)
+          .send({
+            error:
+              "Falha ao criar o setor ou associá-lo ao cargo de colaborador",
+          });
+      }
     } else {
       return res.status(500).send({ error: "Falha ao criar o setor" });
     }
