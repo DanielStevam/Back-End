@@ -51,7 +51,6 @@ exports.updateCargo = async (req, res) => {
       "UPDATE cargo SET nome = ?, setor_idsetor = ? WHERE idcargo = ?;";
     const params = [nomeCargo, idSetor, idcargo];
     await mysql.execute(query, params);
-    // todo: valide se as linhas foram afetadas. Exemplo acima em result.lenght > 0
 
     return res
       .status(200)
@@ -67,7 +66,6 @@ exports.deleteCargo = async (req, res) => {
     const query = "delete from cargo WHERE idcargo = ?;";
     const params = [idcargo];
     await mysql.execute(query, params);
-    // todo: valide se as linhas foram afetadas. Exemplo acima em result.lenght > 0
 
     return res
       .status(200)
